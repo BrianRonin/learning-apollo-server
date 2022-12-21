@@ -6,11 +6,30 @@ export const type_post = `#graphql
     userId: String!
     indexRef: Int!
     createdAt: String!
-    # user: User!
+    idade: Int!
+    user: User!
   }
 
+  interface PostError {
+    statusCode: Int!
+    message: String!
+  }
+
+  type PostNotFoundError implements PostError {
+    statusCode: Int!
+    message: String!
+  }
+
+  type PostTimeoutError implements PostError {
+    statusCode: Int!
+    message: String!
+    timeout: Int!
+  }
+
+  union PostResult = PostNotFoundError | PostTimeoutError | Post
+
   extend type Query {
-    posts: [Post!]!
-    post(id: ID!): Post
+    posts(filter: FilterInput): [Post!]!
+    post(id: ID!): PostResult!
   }
 `

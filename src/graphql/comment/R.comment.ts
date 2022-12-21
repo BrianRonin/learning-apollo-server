@@ -3,6 +3,11 @@ export const resolver_comments = (
   args,
   { db: { comments } },
 ) => {
+  if(args.filter){
+    const search = new URLSearchParams(args.filter).toString()
+    return comments('?' + search)
+  }
+
   return comments()
 }
 

@@ -3,6 +3,11 @@ export const resolver_users = (
   args,
   { db: { users } },
 ) => {
+    if(args.filter){
+    const search = new URLSearchParams(args.filter).toString()
+    return users('?' + search)
+  }
+
   return users()
 }
 

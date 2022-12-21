@@ -10,7 +10,7 @@ export const type_user = `#graphql
   }
 
   extend type Query {
-    users: [User]!
+    users(filter: FilterInput): [User]!
     user(id: ID!): User
   }
 `

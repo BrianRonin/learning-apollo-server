@@ -9,7 +9,7 @@ export const type_comment = `#graphql
   }
 
   extend type Query {
-    comments: [Comment!]!
+    comments(filter: FilterInput): [Comment!]!
     comment(id: ID!): Comment
   }
 `

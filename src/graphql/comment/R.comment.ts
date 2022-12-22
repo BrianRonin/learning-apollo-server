@@ -3,8 +3,10 @@ export const resolver_comments = (
   args,
   { db: { comments } },
 ) => {
-  if(args.filter){
-    const search = new URLSearchParams(args.filter).toString()
+  if (args.filter) {
+    const search = new URLSearchParams(
+      args.filter,
+    ).toString()
     return comments('?' + search)
   }
 
@@ -14,7 +16,7 @@ export const resolver_comments = (
 export const resolver_comment = (
   parent,
   { id },
-  { db: { comments } },
+  { db: { comment } },
 ) => {
-  return comments(id)
+  return comment.load(id)
 }

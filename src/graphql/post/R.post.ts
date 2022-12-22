@@ -1,67 +1,74 @@
-const resolver_posts = (
-  parent,
-  args,
-  { db: { posts } },
-) => {
-  console.log('args.filter: ' + args.filter)
-  if(args.filter){
-    const search = new URLSearchParams(args.filter).toString()
+import {
+  GraphQLRequestContextDidResolveOperation,
+  GraphQLRequestContextDidResolveSource,
+} from '@apollo/server'
+import { GraphQLTypeResolver } from 'graphql'
+import { Context } from '../..'
+
+const resolver_posts = (parent, args, { db }) => {
+  if (args.filter) {
+    const search = new URLSearchParams(
+      args.filter,
+    ).toString()
     console.log('search: ' + search)
-    return posts('?' + search)
+    return db.getPosts()
   }
   return posts()
 }
 
 const resolver_post = async (
   parent,
-  {id},
-  { db: { posts } },
+  { id },
+  { db: { post } },
 ) => {
-  const post = await posts(id)
-  if(Math.random() > 0.5) {
+  const resolve = await post.load(id)
+  if (resolve.timeout) {
     return {
-      statusCode: 404,
-      message: 'Post not found!',
-      timeout: 123
+      statusCode: 408,
+      message: post.message,
     }
   }
-  if(typeof post.id === 'undefined') {
+  if (resolve.statusCode === 404) {
     return {
       statusCode: 404,
-      message: 'Post not found!'
+      message: post.message,
     }
   }
-  return post
+  return resolve
 }
-
 
 export const post_resolvers = {
   Query: {
     post: resolver_post,
-    posts: resolver_posts
+    posts: resolver_posts,
   },
   General: {
-    PostResult: { // As union
+    PostResult: {
+      // As union
       __resolveType: (obj) => {
-        if(obj.postId) return 'PostNotFoundError'
-        if(obj.timeout) return 'PostTimeoutError'
-        if(obj.id) return 'Post'
+        if (obj.statusCode === 404)
+          return 'PostNotFoundError'
+        if (obj.timeout) return 'PostTimeoutError'
+        if (obj.id) return 'Post'
         return null
-      }
+      },
     },
-    PostError: { // As interface
+    PostError: {
+      // As interface
       __resolveType: (obj) => {
-        if(obj.postId) return 'PostNotFoundError'
-        if(obj.timeout) return 'PostTimeoutError'
+        if (obj.postId) return 'PostNotFoundError'
+        if (obj.timeout) return 'PostTimeoutError'
         return null
-      }
+      },
     },
     Post: {
-      user: async (parent, __, { db: { users }}) => {
-        const r = await users(parent.userId)
-        if(r) return r
-        return null
-      }
-    }
-  }
+      user: async (
+        parent,
+        __,
+        { db: { user } },
+      ) => {
+        return await user.load(parent.userId)
+      },
+    },
+  },
 }

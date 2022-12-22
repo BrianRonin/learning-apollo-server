@@ -1,12 +1,13 @@
 import { ApolloServer } from '@apollo/server'
 import { startStandaloneServer } from '@apollo/server/standalone'
-import { db } from './db'
+import { datasource_post } from './graphql/post/D.post'
 import { resolvers } from './graphql/resolvers'
 import { schema } from './graphql/schema'
-import { Database } from './graphql/types'
 
-type Context = {
-  db: Database
+export interface Context {
+  db: {
+    post: datasource_post
+  }
 }
 
 const server = new ApolloServer<Context>({
@@ -20,9 +21,10 @@ const start = async () => {
     {
       listen: { port: 4000 },
       context: async ({ req, res }) => {
-        const database = await db()
         return {
-          db: database,
+          db: {
+            post: new datasource_post(),
+          },
         }
       },
     },

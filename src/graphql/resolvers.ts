@@ -1,7 +1,14 @@
-import { resolver_comment, resolver_comments } from "./comment/R.comment"
-import { FilterInput } from "./FilterInput/R.filterInput"
-import { post_resolvers } from "./post/R.post"
-import { resolver_user, resolver_users } from "./user/R.user"
+import {
+  resolver_comment,
+  resolver_comments,
+} from './comment/R.comment'
+import { FilterInput } from './FilterInput/R.filterInput'
+import { post_resolvers } from './post/R.post'
+import {
+  resolver_user,
+  resolver_users,
+  user_resolvers,
+} from './user/R.user'
 
 export const resolvers = {
   Query: {
@@ -14,13 +21,7 @@ export const resolvers = {
       return 'ola amiguinho'
     },
   },
-  Post: {
-    idade: (parent, args, context, info) => {
-      console.log('parent: ', parent)
-      console.log('info: ', info)
-      return 5
-    }
-  },
   ...post_resolvers.General,
+  ...user_resolvers.General,
   ...FilterInput,
 }

@@ -1,10 +1,20 @@
-import DataLoader from 'dataloader';
+import DataLoader from 'dataloader'
 
-export const makeDataLoader = (get) => {
-  return new DataLoader(async (ids) => {
-    const urlQuery = ids.join('&id=');
-    const response = await get('?id=' + urlQuery);
-    const users = await response.json();
-    return ids.map((id) => users.find((user) => user.id === id));
-  });
-};
+export const makeDataLoader = (
+  get: (path?: string) => Promise<any>,
+  param: string,
+  mapCallback: (
+    id: string,
+    response: any[],
+  ) => any,
+): DataLoader<any, any, any> => {
+  return new DataLoader(async (ids: string[]) => {
+    const urlQuery = ids.join(`&${param}=`)
+    const response = await get(
+      `?${param}=` + urlQuery,
+    )
+    return ids.map((id) =>
+      mapCallback(id, response),
+    )
+  })
+}

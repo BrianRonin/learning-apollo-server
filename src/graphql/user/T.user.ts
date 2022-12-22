@@ -1,12 +1,12 @@
 export const type_user = `#graphql
  type User {
-    id: ID
+    id: ID!
     firstName: String
     lastName: String
     userName: String
     indexRef: Int
     createdAt: String
-    # posts: [Post!]!
+    posts: [Post]!
   }
 
   extend type Query {

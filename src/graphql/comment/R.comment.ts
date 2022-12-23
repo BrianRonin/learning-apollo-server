@@ -1,22 +1,30 @@
-export const resolver_comments = (
+const resolver_comments = async (
   parent,
   args,
-  { db: { comments } },
+  { db },
 ) => {
   if (args.filter) {
     const search = new URLSearchParams(
       args.filter,
     ).toString()
-    return comments('?' + search)
+    return await db.ds_comment.getComments(
+      '?' + search,
+    )
   }
-
-  return comments()
+  return await db.ds_comment.getComments()
 }
 
-export const resolver_comment = (
+const resolver_comment = async (
   parent,
   { id },
-  { db: { comment } },
+  { db },
 ) => {
-  return comment.load(id)
+  return await db.ds_comment.getComment.load(id)
+}
+
+export const comment_resolvers = {
+  Query: {
+    comment: resolver_comment,
+    comments: resolver_comments,
+  },
 }

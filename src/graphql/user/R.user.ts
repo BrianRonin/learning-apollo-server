@@ -1,26 +1,50 @@
-import { type_post } from '../post/T.post'
-
-export const resolver_users = async (
+const resolver_users = async (
   parent,
   args,
-  { db: { users } },
+  { db },
 ) => {
   if (args.filter) {
     const search = new URLSearchParams(
       args.filter,
     ).toString()
-    return users('?' + search)
+    return await db.ds_user.getUsers('?' + search)
   }
-  const resolve = await users()
-  return resolve
+  return await db.ds_user.getUsers()
 }
 
-export const resolver_user = async (
+const resolver_user = async (
   parent,
   { id },
-  { db: { user } },
+  { db },
 ) => {
-  return await user.load(id)
+  return await db.ds_user.getUser.load(id)
+}
+
+const resolver_createUser = async (
+  parent,
+  { userInput },
+  { db },
+) => {
+  return await db.ds_user.createUser(userInput)
+}
+
+const resolver_updateUser = async (
+  parent,
+  { id, userInput },
+  { db },
+) => {
+  return await db.ds_user.updateUser(
+    id,
+    userInput,
+  )
+}
+
+const resolver_deleteUser = async (
+  parent,
+  { id },
+  { db },
+) => {
+  return await db.ds_user.deleteUser(id)
 }
 
 export const user_resolvers = {
@@ -28,14 +52,17 @@ export const user_resolvers = {
     user: resolver_user,
     users: resolver_users,
   },
+  Mutation: {
+    createUser: resolver_createUser,
+    updateUser: resolver_updateUser,
+    deleteUser: resolver_deleteUser,
+  },
   General: {
     User: {
-      posts: async (
-        parent,
-        __,
-        { db: { postsByUserId } },
-      ) => {
-        return await postsByUserId.load(parent.id)
+      posts: async (parent, __, { db }) => {
+        return await db.ds_post.getPostsByUserId.load(
+          parent.id,
+        )
       },
     },
   },

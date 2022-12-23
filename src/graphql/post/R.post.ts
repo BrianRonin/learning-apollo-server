@@ -1,46 +1,70 @@
-import {
-  GraphQLRequestContextDidResolveOperation,
-  GraphQLRequestContextDidResolveSource,
-} from '@apollo/server'
-import { GraphQLTypeResolver } from 'graphql'
-import { Context } from '../..'
-
 const resolver_posts = (parent, args, { db }) => {
   if (args.filter) {
     const search = new URLSearchParams(
       args.filter,
     ).toString()
-    console.log('search: ' + search)
-    return db.getPosts()
+    return db.ds_post.getPosts(search)
   }
-  return posts()
+  return db.ds_post.getPosts()
 }
 
 const resolver_post = async (
   parent,
   { id },
-  { db: { post } },
+  { db },
 ) => {
-  const resolve = await post.load(id)
+  const resolve = await db.ds_post.getPost.load(
+    id,
+  )
   if (resolve.timeout) {
     return {
       statusCode: 408,
-      message: post.message,
+      message: resolve.message,
     }
   }
   if (resolve.statusCode === 404) {
     return {
       statusCode: 404,
-      message: post.message,
+      message: resolve.message,
     }
   }
   return resolve
+}
+
+const resolver_createPost = async (
+  parent,
+  { postInput },
+  { db },
+) => {
+  return await db.ds_post.createPost(postInput)
+}
+const resolver_updatePost = async (
+  parent,
+  { id, postInput },
+  { db },
+) => {
+  return await db.ds_post.updatePost(
+    id,
+    postInput,
+  )
+}
+const resolver_deletePost = async (
+  parent,
+  { id },
+  { db },
+) => {
+  return await db.ds_post.deletePost(id)
 }
 
 export const post_resolvers = {
   Query: {
     post: resolver_post,
     posts: resolver_posts,
+  },
+  Mutation: {
+    createPost: resolver_createPost,
+    updatePost: resolver_updatePost,
+    deletePost: resolver_deletePost,
   },
   General: {
     PostResult: {
@@ -62,12 +86,10 @@ export const post_resolvers = {
       },
     },
     Post: {
-      user: async (
-        parent,
-        __,
-        { db: { user } },
-      ) => {
-        return await user.load(parent.userId)
+      user: async (parent, __, { db }) => {
+        return await db.ds_user.getUser.load(
+          parent.userId,
+        )
       },
     },
   },

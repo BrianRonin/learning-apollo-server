@@ -1,13 +1,24 @@
 export const type_post = `#graphql
- type Post {
+  type Post {
     id: ID!
     title: String!
     body: String!
     userId: String!
     indexRef: Int!
     createdAt: String!
-    idade: Int!
     user: User!
+  }
+
+  input CreatePostInput {
+    title: String!
+    body: String!
+    userId: String!
+  }
+
+  input UpdatePostInput {
+    title: String
+    body: String
+    userId: String
   }
 
   interface PostError {
@@ -32,4 +43,11 @@ export const type_post = `#graphql
     posts(filter: FilterInput): [PostResult]!
     post(id: ID!): PostResult!
   }
+
+  extend type Mutation {
+    createPost(postInput: CreatePostInput!): Post!
+    updatePost(id: ID!, postInput: UpdatePostInput!): Post!
+    deletePost(id: ID!): Boolean!
+  }
+
 `

@@ -12,13 +12,11 @@ export const type_post = `#graphql
   input CreatePostInput {
     title: String!
     body: String!
-    userId: String!
   }
 
   input UpdatePostInput {
     title: String
     body: String
-    userId: String
   }
 
   interface PostError {

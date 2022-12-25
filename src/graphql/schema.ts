@@ -1,3 +1,4 @@
+import { type_auth } from './auth/T.auth'
 import { type_comment } from './comment/T.comment'
 import { type_filter } from './FilterInput/T.filterInput'
 import { type_post } from './post/T.post'
@@ -14,4 +15,5 @@ export const schema = `#graphql
   ${type_post}
   ${type_user}
   ${type_comment}
+  ${type_auth}
 `

@@ -1,4 +1,5 @@
 import { GraphQLError } from 'graphql'
+import { Payload } from '../../types/jsonWebToken'
 import { myRestDatasource } from '../datasource'
 import { Post } from '../types'
 
@@ -26,10 +27,12 @@ export class datasource_post extends myRestDatasource {
     },
   )
 
-  async createPost(post: Post) {
-    await this.userExist(
-      post.userId,
-      'invalid userId',
+  async createPost(post: Post, user: Payload) {
+    await this.exist(
+      '/users/' + encodeURI(user.userId),
+      {
+        errorElseExist: 'invalid userId',
+      },
     )
     const indexRef = await this.lastRef(
       '/posts/',
@@ -39,29 +42,62 @@ export class datasource_post extends myRestDatasource {
     return await this.post('/posts/', {
       body: {
         ...post,
+        userId: user.userId,
         indexRef: indexRef.toString(),
         createdAt: new Date().toISOString(),
       },
     })
   }
 
-  async updatePost(id: string, post: Post) {
+  async updatePost(
+    id: string,
+    post: Post,
+    user: Payload,
+  ) {
     if (!id)
       throw new GraphQLError('id is missing')
-    if (post?.userId) {
-      await this.userExist(
-        post.userId,
-        'invalid userId',
+    const { userId } = await this.get(
+      '/posts/' + encodeURI(id),
+      {
+        cacheOptions: { ttl: 0 },
+      },
+    )
+    if (!userId)
+      throw new GraphQLError('invalid post id')
+    if (userId !== user.userId)
+      throw new GraphQLError(
+        'you can only manipulate your posts',
+        {
+          extensions: { code: 401 },
+        },
       )
-    }
     return await this.patch('/posts/' + id, {
       body: { ...post },
     })
   }
 
-  async deletePost(id: string) {
+  async deletePost(id: string, user: Payload) {
     if (!id)
       throw new GraphQLError('id is missing')
+    const { userId } = await this.get(
+      '/posts/' + encodeURI(id),
+      {
+        cacheOptions: { ttl: 0 },
+      },
+    )
+    if (!userId)
+      throw new GraphQLError('invalid post id', {
+        extensions: { code: 401 },
+      })
+
+    if (userId !== user.userId)
+      throw new GraphQLError(
+        'you can only manipulate your posts',
+        {
+          extensions: { code: 401 },
+        },
+      )
+
     await this.delete('/posts/' + id)
     return true
   }

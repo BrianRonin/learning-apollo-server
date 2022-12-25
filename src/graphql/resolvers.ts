@@ -1,3 +1,4 @@
+import { auth_resolvers } from './auth/R.auth'
 import { comment_resolvers } from './comment/R.comment'
 import { FilterInput } from './FilterInput/R.filterInput'
 import { post_resolvers } from './post/R.post'
@@ -14,6 +15,7 @@ export const resolvers = {
     _root_: () => true,
     ...user_resolvers.Mutation,
     ...post_resolvers.Mutation,
+    ...auth_resolvers.Mutation,
   },
   ...post_resolvers.General,
   ...user_resolvers.General,

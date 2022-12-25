@@ -5,6 +5,7 @@
       "firstName": "Elisa",
       "lastName": "Pereira",
       "userName": "elisa.pereira",
+      "email": "sida@gmail.com",
       "indexRef": 17,
       "createdAt": "2017-02-15T11:29:40.799Z"
     },
@@ -153,12 +154,14 @@
       "createdAt": "2016-12-08T00:49:39.870Z"
     },
     {
-      "firstName": "brian",
-      "lastName": "cristiano",
-      "userName": "Brian cristiano",
+      "firstName": "Brian",
+      "lastName": "Ronin",
+      "userName": "BrianRonin",
+      "password": "$2b$10$00HtBOyHCgIlSNIxvAcg5e4/Qonwp03GgC5BFInfv9JBXe/4pfThq",
+      "email": "01100010y@gmail.com",
       "indexRef": 21,
-      "createdAt": "2022-12-23T03:06:41.387Z",
-      "id": "sVPko3O"
+      "createdAt": "2022-12-25T05:01:17.565Z",
+      "id": "N23dIDS"
     }
   ],
   "posts": [
@@ -313,6 +316,14 @@
       "indexRef": "27",
       "createdAt": "2022-12-23T00:53:59.536Z",
       "id": "xAaStv3"
+    },
+    {
+      "title": "xxxffffff",
+      "body": "body alterado",
+      "userId": "N23dIDS",
+      "indexRef": "28",
+      "createdAt": "2022-12-25T05:05:35.556Z",
+      "id": "RLdVLL2"
     }
   ],
   "comments": [

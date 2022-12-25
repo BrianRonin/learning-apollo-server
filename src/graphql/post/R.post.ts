@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql'
+
 const resolver_posts = (parent, args, { db }) => {
   if (args.filter) {
     const search = new URLSearchParams(
@@ -34,26 +36,42 @@ const resolver_post = async (
 const resolver_createPost = async (
   parent,
   { postInput },
-  { db },
+  { db, user },
 ) => {
-  return await db.ds_post.createPost(postInput)
+  if (!user?.token || !user?.userId)
+    throw new GraphQLError('unauthorized', {
+      extensions: { code: 401 },
+    })
+  return await db.ds_post.createPost(
+    postInput,
+    user,
+  )
 }
 const resolver_updatePost = async (
   parent,
   { id, postInput },
-  { db },
+  { db, user },
 ) => {
+  if (!user?.token)
+    throw new GraphQLError('unauthorized', {
+      extensions: { code: 401 },
+    })
   return await db.ds_post.updatePost(
     id,
     postInput,
+    user,
   )
 }
 const resolver_deletePost = async (
   parent,
   { id },
-  { db },
+  { db, user },
 ) => {
-  return await db.ds_post.deletePost(id)
+  if (!user?.token)
+    throw new GraphQLError('unauthorized', {
+      extensions: { code: 401 },
+    })
+  return await db.ds_post.deletePost(id, user)
 }
 
 export const post_resolvers = {

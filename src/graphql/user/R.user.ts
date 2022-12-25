@@ -1,9 +1,11 @@
+import { GraphQLError } from 'graphql'
+
 const resolver_users = async (
   parent,
   args,
   { db },
 ) => {
-  if (args.filter) {
+  if (args?.filter) {
     const search = new URLSearchParams(
       args.filter,
     ).toString()
@@ -30,27 +32,56 @@ const resolver_createUser = async (
 
 const resolver_updateUser = async (
   parent,
-  { id, userInput },
-  { db },
+  { password, userInput },
+  { db, user },
 ) => {
+  if (!user?.token)
+    throw new GraphQLError('unauthorized', {
+      extensions: { code: 401 },
+    })
+  await db.ds_user.validatePassword({
+    user,
+    password,
+  })
   return await db.ds_user.updateUser(
-    id,
     userInput,
+    user.userId,
   )
 }
 
 const resolver_deleteUser = async (
   parent,
-  { id },
-  { db },
+  { password },
+  { db, user },
 ) => {
-  return await db.ds_user.deleteUser(id)
+  if (!user?.token)
+    throw new GraphQLError('unauthorized', {
+      extensions: { code: 401 },
+    })
+  await db.ds_user.validatePassword({
+    user,
+    password,
+  })
+  return await db.ds_user.deleteUser(user.userId)
+}
+
+const resolver_me = async (
+  parent,
+  _,
+  { db, user },
+) => {
+  if (!user?.token)
+    throw new GraphQLError('unauthorized', {
+      extensions: { code: 401 },
+    })
+  return await db.ds_user.queryMe(user)
 }
 
 export const user_resolvers = {
   Query: {
     user: resolver_user,
     users: resolver_users,
+    me: resolver_me,
   },
   Mutation: {
     createUser: resolver_createUser,

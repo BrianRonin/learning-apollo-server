@@ -5,7 +5,11 @@ import { GraphQLError } from 'graphql'
 export class datasource_auth extends myRestDatasource {
   override baseURL? = process.env.URI_LOCAL
 
-  async auth(email: string, password: string) {
+  async auth(
+    email: string,
+    password: string,
+    res: any,
+  ) {
     const user = await this.exist(
       '/users/?email=' + encodeURI(email),
       {

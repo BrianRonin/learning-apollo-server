@@ -1,16 +1,19 @@
 import { ApolloServer } from '@apollo/server'
-import { startStandaloneServer } from '@apollo/server/standalone'
-import { datasource_auth } from './graphql/auth/D.auth'
 import { datasource_comment } from './graphql/comment/D.comment'
 import { datasource_post } from './graphql/post/D.post'
 import { resolvers } from './graphql/resolvers'
 import { schema } from './graphql/schema'
 import { datasource_user } from './graphql/user/D.user'
-import bcrypt from 'bcrypt'
-import jwt, {
-  JsonWebTokenError,
-  JwtPayload,
-} from 'jsonwebtoken'
+import { context } from './graphql/context'
+import { expressMiddleware } from '@apollo/server/express4'
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer'
+import express from 'express'
+import http from 'http'
+import cors from 'cors'
+import bodyParser from 'body-parser'
+
+const app = express()
+const httpServer = http.createServer(app)
 
 export interface Context {
   db: {
@@ -26,49 +29,34 @@ const server = new ApolloServer<Context>({
   persistedQueries: {
     ttl: 60,
   },
+  plugins: [
+    ApolloServerPluginDrainHttpServer({
+      httpServer,
+    }),
+  ],
 })
 
 const start = async () => {
-  const { url } = await startStandaloneServer(
-    server,
-    {
-      listen: { port: 4000 },
-      context: async ({ req, res }) => {
-        let token = ''
-        let userId = ''
-        let error = false
-        if (req.headers.authorization) {
-          try {
-            const [_, _token_] =
-              req.headers.authorization.split(' ')
-            const payload = jwt.verify(
-              _token_,
-              process.env.JWT_SECRET,
-            )
-            if (
-              typeof payload !== 'string' &&
-              typeof payload.userId === 'string'
-            ) {
-              token = _token_
-              userId = payload.userId
-            }
-          } catch (e) {
-            error = e.message
-          }
-        }
-        return {
-          user: { token, userId, error },
-          db: {
-            ds_post: new datasource_post(),
-            ds_user: new datasource_user(),
-            ds_comment: new datasource_comment(),
-            ds_auth: new datasource_auth(),
-          },
-        }
-      },
-    },
+  await server.start()
+
+  app.use(
+    '/',
+    cors<cors.CorsRequest>({
+      origin: 'http://localhost',
+      optionsSuccessStatus: 200,
+    }),
+    bodyParser.json(),
+    expressMiddleware(server, {
+      context,
+    }),
   )
 
-  console.log('servidor escutando ' + url)
+  // Modified server startup
+  await new Promise<void>((resolve) =>
+    httpServer.listen({ port: 4000 }, resolve),
+  )
+  console.log(
+    `🚀 Server ready at http://localhost:4000/`,
+  )
 }
 start()

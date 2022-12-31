@@ -3,7 +3,7 @@ build
 venv
 _example.py
 .mypy_cache
-
+mysql-data
 # Logs
 logs
 *.log

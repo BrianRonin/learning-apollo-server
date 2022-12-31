@@ -1,7 +1,7 @@
 {
   "name": "template-clean-ts-jest",
   "version": "1.0.0",
-  "main": "dist/index.js",
+  "main": "src/index.ts",
   "license": "MIT",
   "dependencies": {
     "@apollo/datasource-rest": "^4.3.2",
@@ -16,26 +16,33 @@
     "express": "^4.18.2",
     "graphql": "^16.6.0",
     "json-server": "^0.17.1",
-    "jsonwebtoken": "^9.0.0"
+    "jsonwebtoken": "^9.0.0",
+    "knex": "^2.3.0",
+    "mysql2": "^2.3.3"
   },
-  "type": "module",
   "scripts": {
-    "compile": "tsc",
+    "compile": "sucrase ./src -d ./outDir --transforms typescript,imports",
     "start": "node ./build/index.js",
-    "build": "rm -rf ./build/ && tsc -p .",
+    "build": "rimraf ./dist/ && tsc -p .",
     "mock": "json-server --watch db.json",
+    "mknex": "knex --knexfile src/db/knexfile.ts migrate:make",
+    "lknex": "knex --knexfile src/db/knexfile.ts migrate:latest",
+    "rknex": "knex --knexfile src/db/knexfile.ts migrate:rollback",
     "dev": "nodemon"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
     "@types/jest": "^29.2.4",
     "@types/jsonwebtoken": "^9.0.0",
+    "@types/knex": "^0.16.1",
     "@types/node": "^18.11.16",
     "@typescript-eslint/eslint-plugin": "^5.47.0",
     "@typescript-eslint/parser": "^5.47.0",
     "eslint": "^8.30.0",
     "jest": "^29.3.1",
     "nodemon": "^2.0.20",
+    "rimraf": "^3.0.2",
+    "sucrase": "^3.29.0",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.4"
   }

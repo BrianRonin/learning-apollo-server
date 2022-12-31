@@ -1,0 +1,27 @@
+version: '3.8'
+name: learning-apollo
+services:
+  db:
+    image: mysql:8.0
+    container_name: db
+    cap_add:
+      - SYS_NICE
+    restart: always
+    environment:
+      - MYSQL_DATABASE=db
+      - MYSQL_ROOT_PASSWORD=3000
+      - TZ=America/Sao_paulo
+    ports:
+      - '3306:3306'
+    command:
+      [
+        'mysqld',
+        '--character-set-server=utf8mb4',
+        '--collation-server=utf8mb4_unicode_ci',
+        '--default-time-zone=-03:00',
+      ]
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+volumes:
+  db:
+    driver: local

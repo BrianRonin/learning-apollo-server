@@ -2,6 +2,6 @@
   "watch": ["src"],
   "ext": "ts",
   "ignore": ["src/**/*.spec.ts"],
-  "exec": "yarn run compile && node -r dotenv/config --es-module-specifier-resolution=node ./dist/index.js",
-  "__": "yarn ts-node ./src/index.ts"
+  "exec": "yarn ts-node -r dotenv/config -r sucrase/register ./src/index.ts",
+  "__": "yarn run compile && node -r dotenv/config --es-module-specifier-resolution=node ./dist/index.js"
 }

@@ -2,14 +2,14 @@ import { RESTDataSource } from '@apollo/datasource-rest'
 import DataLoader from 'dataloader'
 import { GraphQLError } from 'graphql'
 import bcrypt from 'bcrypt'
-import { Payload } from '../types/jsonWebToken'
+import { Payload } from '../../types/jsonWebToken'
 
 type Credentials = {
   user: Payload
   password: string
 }
 
-export class myRestDatasource extends RESTDataSource {
+export class MyRestDatasource extends RESTDataSource {
   makeDataLoader(
     get: (path?: string) => Promise<any>,
     param: string,

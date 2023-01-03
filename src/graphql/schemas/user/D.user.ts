@@ -1,6 +1,6 @@
 import { GraphQLError } from 'graphql'
-import { myRestDatasource } from '../datasource'
 import bcrypt from 'bcrypt'
+import { MyRestDatasource } from '../../datasources/RESTDatasource'
 
 type InputCreateUser = {
   firstName?: string
@@ -10,7 +10,7 @@ type InputCreateUser = {
   password?: string
 }
 
-export class datasource_user extends myRestDatasource {
+export class datasource_user extends MyRestDatasource {
   override baseURL = process.env.URI_LOCAL
 
   async getUsers(params = {}) {

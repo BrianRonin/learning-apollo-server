@@ -6,6 +6,7 @@ export const type_post = `#graphql
     userId: String!
     indexRef: Int!
     createdAt: String!
+    comments: [Comment]!
     user: User!
   }
 

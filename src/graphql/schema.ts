@@ -1,8 +1,8 @@
 import { type_auth } from './auth/T.auth'
-import { type_comment } from './comment/T.comment'
-import { type_filter } from './FilterInput/T.filterInput'
-import { type_post } from './post/T.post'
-import { type_user } from './user/T.user'
+import { type_comment } from './schemas/comment/T.comment'
+import { type_filter } from './schemas/FilterInput/T.filterInput'
+import { type_post } from './schemas/post/T.post'
+import { type_user } from './schemas/user/T.user'
 
 export const schema = `#graphql
   type Query {

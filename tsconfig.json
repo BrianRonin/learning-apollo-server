@@ -7,7 +7,9 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "types": ["node"]
+    "types": ["node"],
+    "resolveJsonModule": true,
+    "allowJs": true
   },
   "include": ["./src"]
 }

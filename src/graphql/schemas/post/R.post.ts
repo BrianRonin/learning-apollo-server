@@ -109,6 +109,9 @@ export const post_resolvers = {
           parent.userId,
         )
       },
+      comments: async ({ id }, __, { db }) => {
+        return await db.ds_comment.getComment(id)
+      },
     },
   },
 }

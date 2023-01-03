@@ -12,6 +12,7 @@
     "body-parser": "^1.20.1",
     "cors": "^2.8.5",
     "dataloader": "^2.1.0",
+    "datasource-sql": "^2.0.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "graphql": "^16.6.0",
@@ -25,9 +26,9 @@
     "start": "node ./build/index.js",
     "build": "rimraf ./dist/ && tsc -p .",
     "mock": "json-server --watch db.json",
-    "mknex": "knex --knexfile src/db/knexfile.ts migrate:make",
-    "lknex": "knex --knexfile src/db/knexfile.ts migrate:latest",
-    "rknex": "knex --knexfile src/db/knexfile.ts migrate:rollback",
+    "mknex": "knex --knexfile src/db/knexfile.js migrate:make",
+    "lknex": "knex --knexfile src/db/knexfile.js migrate:latest",
+    "rknex": "knex --knexfile src/db/knexfile.js migrate:rollback",
     "dev": "nodemon"
   },
   "devDependencies": {

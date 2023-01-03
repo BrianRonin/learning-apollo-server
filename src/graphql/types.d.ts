@@ -18,9 +18,8 @@ export type Post = {
 } & meta
 
 export type Comment = {
-  userId: String
-  postId: String
-  comment: String
+  id: number
+  comment: string
 } & meta
 
 export type Database = {

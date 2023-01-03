@@ -1,9 +1,8 @@
 import jwt from 'jsonwebtoken'
-import { cookieParser } from '../utils/cookie-parser'
-import { datasource_auth } from './auth/D.auth'
-import { datasource_comment } from './comment/D.comment'
-import { datasource_post } from './post/D.post'
-import { datasource_user } from './user/D.user'
+import { datasource_auth } from '../auth/D.auth'
+import { datasource_comment } from '../schemas/comment/D.comment'
+import { datasource_post } from '../schemas/post/D.post'
+import { datasource_user } from '../schemas/user/D.user'
 
 export const context = async ({ req, res }) => {
   let token = ''
@@ -27,14 +26,8 @@ export const context = async ({ req, res }) => {
       error = e
     }
   }
-  console.log('cookie: ' + req.headers.cookie)
   if (req.headers.authorization) {
     verify(req.headers.authorization)
-  } else if (req.headers.cookie) {
-    const { jwtToken } = cookieParser(
-      req.headers.cookie,
-    )
-    verify(jwtToken)
   }
   token = jwt.sign(
     { userId: 'N23dIDS' },

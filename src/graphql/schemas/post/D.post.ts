@@ -1,9 +1,9 @@
 import { GraphQLError } from 'graphql'
-import { Payload } from '../../types/jsonWebToken'
-import { myRestDatasource } from '../datasource'
-import { Post } from '../types'
+import { Payload } from '../../../types/jsonWebToken'
+import { MyRestDatasource } from '../../datasources/RESTDatasource'
+import { Post } from '../../types'
 
-export class datasource_post extends myRestDatasource {
+export class datasource_post extends MyRestDatasource {
   override baseURL = process.env.URI_LOCAL
 
   async getPosts(params = {}) {

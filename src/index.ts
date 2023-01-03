@@ -1,16 +1,16 @@
 import { ApolloServer } from '@apollo/server'
-import { datasource_comment } from './graphql/comment/D.comment'
-import { datasource_post } from './graphql/post/D.post'
 import { resolvers } from './graphql/resolvers'
 import { schema } from './graphql/schema'
-import { datasource_user } from './graphql/user/D.user'
-import { context } from './graphql/context'
+import { context } from './graphql/context/context'
 import { expressMiddleware } from '@apollo/server/express4'
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer'
 import express from 'express'
 import http from 'http'
 import cors from 'cors'
 import bodyParser from 'body-parser'
+import { datasource_post } from './graphql/schemas/post/D.post'
+import { datasource_user } from './graphql/schemas/user/D.user'
+import { datasource_comment } from './graphql/schemas/comment/D.comment'
 
 const app = express()
 const httpServer = http.createServer(app)
@@ -23,7 +23,7 @@ export interface Context {
   }
 }
 
-const server = new ApolloServer<Context>({
+export const server = new ApolloServer<Context>({
   typeDefs: schema,
   resolvers: resolvers,
   persistedQueries: {

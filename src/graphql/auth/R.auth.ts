@@ -1,13 +1,9 @@
 const resolver_auth = async (
   parent,
   { email, password },
-  { db, res },
+  { db },
 ) => {
-  return await db.ds_auth.auth(
-    email,
-    password,
-    res,
-  )
+  return await db.ds_auth.auth(email, password)
 }
 
 export const auth_resolvers = {

@@ -1,22 +1,19 @@
-import { myRestDatasource } from '../datasource'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { GraphQLError } from 'graphql'
-export class datasource_auth extends myRestDatasource {
+import { MyRestDatasource } from '../datasources/RESTDatasource'
+
+export class datasource_auth extends MyRestDatasource {
   override baseURL? = process.env.URI_LOCAL
 
-  async auth(
-    email: string,
-    password: string,
-    res: any,
-  ) {
+  async auth(email: string, password: string) {
     const user = await this.exist(
       '/users/?email=' + encodeURI(email),
       {
         errorElseExist: 'email not exists',
       },
     )
-
+    console.log('user: ' + user)
     const passwordIsValid = await bcrypt.compare(
       password,
       user[0].password,

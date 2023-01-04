@@ -20,14 +20,14 @@ const resolver_comment = async (
   return await db.ds_comment.getComment(id)
 }
 
-const commentUser = async (
-  { user_id },
-  _,
-  { db },
-) => {
-  const user = await db.ds_user.getUser.load(
-    user_id,
-  )
+const commentUser = async (parent, _, { db }) => {
+  let user
+  if (parent?.user_id) {
+    user = await db.ds_user.getUser.load(
+      parent.user_id,
+    )
+  }
+  // console.log(parent)
   return user
 }
 
@@ -36,7 +36,6 @@ const createComment = async (
   { data },
   { db, user },
 ) => {
-  console.log('token: ' + user)
   if (!user?.token || !user?.userId)
     throw new GraphQLError('unauthorized', {
       extensions: { code: 401 },

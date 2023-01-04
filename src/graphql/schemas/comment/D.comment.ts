@@ -24,10 +24,9 @@ export class datasource_comment extends MySQLDatasource {
 
   getComment = this.makeDataLoader(
     async (ids) => {
-      const query = this.db('comments').whereIn(
-        'post_id',
-        ids,
-      )
+      const query = this.db('comments')
+        .whereIn('post_id', ids)
+        .select('*')
       const comments = await query
       const filteredComments = ids.map(
         (post_id) => {
@@ -41,6 +40,8 @@ export class datasource_comment extends MySQLDatasource {
               return {
                 comment: comment.comment,
                 id: comment.id,
+                user_id: comment.user_id,
+                post_id: comment.post_id,
               }
             })
         },
@@ -70,8 +71,6 @@ export class datasource_comment extends MySQLDatasource {
     const created = await this.db(
       'comments',
     ).insert(partialComment)
-
-    console.log(created)
     return {
       id: created[0],
       createdAt: new Date().toISOString(),

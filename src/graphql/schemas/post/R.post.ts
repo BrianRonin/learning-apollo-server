@@ -110,7 +110,9 @@ export const post_resolvers = {
         )
       },
       comments: async ({ id }, __, { db }) => {
-        return await db.ds_comment.getComment(id)
+        return await db.ds_comment.getComment.load(
+          id,
+        )
       },
     },
   },

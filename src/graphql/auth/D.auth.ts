@@ -13,7 +13,6 @@ export class datasource_auth extends MyRestDatasource {
         errorElseExist: 'email not exists',
       },
     )
-    console.log('user: ' + user)
     const passwordIsValid = await bcrypt.compare(
       password,
       user[0].password,

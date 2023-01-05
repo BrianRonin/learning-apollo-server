@@ -1,8 +1,16 @@
 import { verifyToken } from '../../utils/verify-token'
-import { datasource_auth } from '../auth/D.auth'
-import { datasource_comment } from '../schemas/comment/D.comment'
-import { datasource_post } from '../schemas/post/D.post'
-import { datasource_user } from '../schemas/user/D.user'
+import { datasource_auth } from '../schema/auth/D.auth'
+import { datasource_comment } from '../schema/comment/D.comment'
+import { datasource_post } from '../schema/post/D.post'
+import { datasource_user } from '../schema/user/D.user'
+
+export interface ApolloContext {
+  db: {
+    ds_post: datasource_post
+    ds_user: datasource_user
+    ds_comment: datasource_comment
+  }
+}
 
 export const context = async ({ req, res }) => {
   const user = verifyToken(

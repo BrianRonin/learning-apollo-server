@@ -1,69 +1,75 @@
-import { ApolloServer } from '@apollo/server'
-import { resolvers } from './graphql/resolvers'
-import { schema as _schema_ } from './graphql/schema'
-import { context } from './graphql/context/context'
-import { expressMiddleware } from '@apollo/server/express4'
-import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer'
+// * Imports: Base
 import express from 'express'
 import http from 'http'
 import cors from 'cors'
 import bodyParser from 'body-parser'
-import { datasource_post } from './graphql/schemas/post/D.post'
-import { datasource_user } from './graphql/schemas/user/D.user'
-import { datasource_comment } from './graphql/schemas/comment/D.comment'
-import { createServer } from 'http'
-import { makeExecutableSchema } from '@graphql-tools/schema'
+
+// * Imports: Apollo-server ⚜
+
+import { expressMiddleware } from '@apollo/server/express4'
+import {
+  ApolloContext,
+  context,
+} from './graphql/context/context'
 import { WebSocketServer } from 'ws'
-import { useServer as useWSGraphqlServer } from 'graphql-ws/lib/use/ws'
+import { useServer } from 'graphql-ws/lib/use/ws'
+import { apolloSchema } from './graphql/schema/schema'
+import { ApolloServer } from '@apollo/server'
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer'
 import { wsContext } from './graphql/context/ws-context'
 
 const app = express()
 const httpServer = http.createServer(app)
-const schema = makeExecutableSchema({
-  typeDefs: _schema_,
-  resolvers,
-})
 
-export interface Context {
-  db: {
-    ds_post: datasource_post
-    ds_user: datasource_user
-    ds_comment: datasource_comment
-  }
-}
-const wsServer = new WebSocketServer({
+// * Websocket server configuration 🔧
+
+const wss = new WebSocketServer({
   server: httpServer,
   path: '/',
 })
 
-const serverWSGraphqlCleanup = useWSGraphqlServer(
-  { schema, context: wsContext },
-  wsServer,
+// * Apollo configuration 🔧
+
+const webSocketApollo = useServer(
+  {
+    schema: apolloSchema,
+    context: wsContext,
+    onConnect: async (ctx) => {
+      //
+    },
+    onDisconnect(ctx, code, reason) {
+      //
+    },
+  },
+  wss,
 )
 
-export const server = new ApolloServer<Context>({
-  schema,
-  persistedQueries: {
-    ttl: 60,
-  },
-  plugins: [
-    ApolloServerPluginDrainHttpServer({
-      httpServer,
-    }),
-    {
-      async serverWillStart() {
-        return {
-          async drainServer() {
-            await serverWSGraphqlCleanup.dispose()
-          },
-        }
-      },
+const graphQLServer =
+  new ApolloServer<ApolloContext>({
+    schema: apolloSchema,
+    persistedQueries: {
+      ttl: 60,
     },
-  ],
-})
+    plugins: [
+      ApolloServerPluginDrainHttpServer({
+        httpServer,
+      }),
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              await webSocketApollo.dispose()
+            },
+          }
+        },
+      },
+    ],
+  })
+
+// * Start Server 🛸
 
 const start = async () => {
-  await server.start()
+  await graphQLServer.start()
 
   app.use(
     '/',
@@ -72,17 +78,16 @@ const start = async () => {
       optionsSuccessStatus: 200,
     }),
     bodyParser.json(),
-    expressMiddleware(server, {
+    expressMiddleware(graphQLServer, {
       context,
     }),
   )
 
-  // Modified server startup
   await new Promise<void>((resolve) =>
     httpServer.listen({ port: 4000 }, resolve),
   )
   console.log(
-    `🚀 Server ready at http://localhost:4000/`,
+    `Apollo-server iniciado http://localhost:4000/ 🎇`,
   )
 }
 start()

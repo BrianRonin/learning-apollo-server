@@ -1,10 +1,6 @@
 import { GraphQLError } from 'graphql'
 
-const resolver_users = async (
-  parent,
-  args,
-  { db },
-) => {
+const users = async (parent, args, { db }) => {
   if (args?.filter) {
     const search = new URLSearchParams(
       args.filter,
@@ -14,15 +10,11 @@ const resolver_users = async (
   return await db.ds_user.getUsers()
 }
 
-const resolver_user = async (
-  parent,
-  { id },
-  { db },
-) => {
+const user = async (parent, { id }, { db }) => {
   return await db.ds_user.getUser.load(id)
 }
 
-const resolver_createUser = async (
+const createUser = async (
   parent,
   { userInput },
   { db },
@@ -30,7 +22,7 @@ const resolver_createUser = async (
   return await db.ds_user.createUser(userInput)
 }
 
-const resolver_updateUser = async (
+const updateUser = async (
   parent,
   { password, userInput },
   { db, user },
@@ -49,7 +41,7 @@ const resolver_updateUser = async (
   )
 }
 
-const resolver_deleteUser = async (
+const deleteUser = async (
   parent,
   { password },
   { db, user },
@@ -65,11 +57,7 @@ const resolver_deleteUser = async (
   return await db.ds_user.deleteUser(user.userId)
 }
 
-const resolver_me = async (
-  parent,
-  _,
-  { db, user },
-) => {
+const me = async (parent, _, { db, user }) => {
   if (!user?.token)
     throw new GraphQLError('unauthorized', {
       extensions: { code: 401 },
@@ -79,14 +67,14 @@ const resolver_me = async (
 
 export const user_resolvers = {
   Query: {
-    user: resolver_user,
-    users: resolver_users,
-    me: resolver_me,
+    user,
+    users,
+    me,
   },
   Mutation: {
-    createUser: resolver_createUser,
-    updateUser: resolver_updateUser,
-    deleteUser: resolver_deleteUser,
+    createUser,
+    updateUser,
+    deleteUser,
   },
   General: {
     User: {

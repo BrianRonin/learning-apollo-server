@@ -6,7 +6,7 @@ export const wsContext = async (
   args,
 ) => {
   const user = verifyToken(
-    ctx?.extra?.connectionParams?.authorization,
+    ctx.connectionParams?.authorization,
   )
 
   return {

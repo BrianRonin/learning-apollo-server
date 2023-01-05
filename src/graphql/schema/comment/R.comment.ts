@@ -3,7 +3,7 @@ import { PubSub } from 'graphql-subscriptions'
 import { withFilter } from 'graphql-subscriptions/dist/with-filter'
 export const pubSub = new PubSub()
 
-const comments = async (
+const get_comments = async (
   parent,
   args,
   { db, user },
@@ -15,7 +15,7 @@ const comments = async (
   return await db.ds_comment.getComments()
 }
 
-const comment = async (
+const get_comment = async (
   parent,
   { id },
   { db },
@@ -53,26 +53,35 @@ const createComment = async (
   return new GraphQLError('post not exists')
 }
 
+const onCreateComment = {
+  subscribe: withFilter(
+    () => {
+      return pubSub.asyncIterator(
+        'CREATED_COMMENT',
+      )
+    },
+    (
+      { onCreateComment: { postOwner } },
+      _,
+      { user: { userId } },
+    ) => {
+      // ? now only the owner of the post is notified
+      if (!postOwner || !userId) return false
+      return postOwner === userId
+    },
+  ),
+}
+
 export const comment_resolvers = {
   Query: {
-    comment,
-    comments,
+    comment: get_comment,
+    comments: get_comments,
   },
   Mutation: {
     createComment,
   },
   Subscription: {
-    onCreateComment: {
-      subscribe: withFilter(
-        () =>
-          pubSub.asyncIterator('CREATED_COMMENT'),
-        (payload, variables) => {
-          console.log('payload: ', payload)
-          console.log('variables: ', variables)
-          return true
-        },
-      ),
-    },
+    onCreateComment,
   },
   General: {
     Comment: {

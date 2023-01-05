@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { GraphQLError } from 'graphql'
-import { MyRestDatasource } from '../datasources/RESTDatasource'
+import { MyRestDatasource } from '../../datasources/RESTDatasource'
 
 export class datasource_auth extends MyRestDatasource {
   override baseURL? = process.env.URI_LOCAL

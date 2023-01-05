@@ -1,6 +1,9 @@
 import { GraphQLError } from 'graphql'
+import { PubSub } from 'graphql-subscriptions'
+import { withFilter } from 'graphql-subscriptions/dist/with-filter'
+export const pubSub = new PubSub()
 
-const resolver_comments = async (
+const comments = async (
   parent,
   args,
   { db, user },
@@ -12,23 +15,12 @@ const resolver_comments = async (
   return await db.ds_comment.getComments()
 }
 
-const resolver_comment = async (
+const comment = async (
   parent,
   { id },
   { db },
 ) => {
   return await db.ds_comment.getComment(id)
-}
-
-const commentUser = async (parent, _, { db }) => {
-  let user
-  if (parent?.user_id) {
-    user = await db.ds_user.getUser.load(
-      parent.user_id,
-    )
-  }
-  // console.log(parent)
-  return user
 }
 
 const createComment = async (
@@ -45,25 +37,53 @@ const createComment = async (
     data.postId,
   )
   if (postExist?.userId) {
-    return await db.ds_comment.createComment(
-      data,
-      user.userId,
-    )
+    const comment =
+      await db.ds_comment.createComment(
+        data,
+        user.userId,
+      )
+    await pubSub.publish('CREATED_COMMENT', {
+      onCreateComment: {
+        ...comment,
+        postOwner: postExist.userId,
+      },
+    })
+    return comment
   }
   return new GraphQLError('post not exists')
 }
 
 export const comment_resolvers = {
   Query: {
-    comment: resolver_comment,
-    comments: resolver_comments,
+    comment,
+    comments,
   },
   Mutation: {
     createComment,
   },
+  Subscription: {
+    onCreateComment: {
+      subscribe: withFilter(
+        () =>
+          pubSub.asyncIterator('CREATED_COMMENT'),
+        (payload, variables) => {
+          console.log('payload: ', payload)
+          console.log('variables: ', variables)
+          return true
+        },
+      ),
+    },
+  },
   General: {
     Comment: {
-      user: commentUser,
+      user: async (parent, _, { db }) => {
+        if (parent?.user_id) {
+          return await db.ds_user.getUser.load(
+            parent.user_id,
+          )
+        }
+        return null
+      },
     },
   },
 }

@@ -11,6 +11,9 @@ export const schema = `#graphql
   type Mutation {
     _root_: Boolean
   }
+  type Subscription {
+    _root_: Boolean
+  }
   ${type_filter}
   ${type_post}
   ${type_user}

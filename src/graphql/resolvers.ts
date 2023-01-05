@@ -18,6 +18,10 @@ export const resolvers = {
     ...auth_resolvers.Mutation,
     ...comment_resolvers.Mutation,
   },
+  Subscription: {
+    _root_: () => true,
+    ...comment_resolvers.Subscription,
+  },
   ...post_resolvers.General,
   ...user_resolvers.General,
   ...comment_resolvers.General,

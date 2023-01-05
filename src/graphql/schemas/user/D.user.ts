@@ -79,10 +79,12 @@ export class datasource_user extends MyRestDatasource {
     return true
   }
 
-  async queryMe(id: string) {
-    if (!id)
+  async queryMe({ userId }) {
+    if (!userId)
       throw new GraphQLError('id is missing')
-    const user = await this.get('/users/' + id)
+    const user = await this.get(
+      '/users/' + userId,
+    )
     return {
       ...user,
       password: '😎 trolei',

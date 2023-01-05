@@ -1,17 +1,5 @@
-import { GraphQLError } from 'graphql'
 import { MySQLDatasource } from '../../datasources/SQLDatasource'
 import { Comment } from '../../types'
-
-const commentReducer = (comment) => {
-  return {
-    id: comment.id,
-    comment: comment.comment,
-    user_id: comment.user_id,
-    createdAt: new Date(
-      comment.created_at,
-    ).toISOString(),
-  }
-}
 
 export class datasource_comment extends MySQLDatasource {
   async getComments(params = {}) {
@@ -66,15 +54,15 @@ export class datasource_comment extends MySQLDatasource {
       comment,
     }
 
-    // const postExists = await
-
     const created = await this.db(
       'comments',
     ).insert(partialComment)
-    return {
+
+    const newComment = {
       id: created[0],
-      createdAt: new Date().toISOString(),
       comment: partialComment.comment,
     }
+
+    return newComment
   }
 }

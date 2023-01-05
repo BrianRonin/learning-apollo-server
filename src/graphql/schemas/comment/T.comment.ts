@@ -1,4 +1,5 @@
 export const type_comment = `#graphql
+  
   type Comment {
     id: ID!
     comment: String!
@@ -17,5 +18,9 @@ export const type_comment = `#graphql
 
   extend type Mutation {
     createComment(data: CreateComment!): Comment!
+  }
+
+  extend type Subscription {
+    onCreateComment: Comment!
   }
 `

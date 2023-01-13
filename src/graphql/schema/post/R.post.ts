@@ -18,16 +18,23 @@ const resolver_post = async (
   const resolve = await db.ds_post.getPost.load(
     id,
   )
-  if (resolve.timeout) {
+  console.log('resolve', resolve)
+  if (resolve?.timeout) {
     return {
       statusCode: 408,
       message: resolve.message,
     }
   }
-  if (resolve.statusCode === 404) {
+  if (resolve?.statusCode === 404) {
     return {
       statusCode: 404,
       message: resolve.message,
+    }
+  }
+  if (typeof resolve === 'undefined') {
+    return {
+      statusCode: 404,
+      message: 'error',
     }
   }
   return resolve

@@ -25,7 +25,9 @@ export class datasource_comment extends MySQLDatasource {
                 String(post_id),
             )
             .map((comment) => {
+              console.log('comment: ', comment)
               return {
+                ...comment,
                 comment: comment.comment,
                 id: comment.id,
                 user_id: comment.user_id,

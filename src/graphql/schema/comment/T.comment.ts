@@ -13,7 +13,7 @@ export const type_comment = `#graphql
 
   extend type Query {
     comments(filter: FilterInput): [Comment!]!
-    comment(id: ID!): Comment!
+    comment(id: ID!): [Comment!]! # Comment by post
   }
 
   extend type Mutation {

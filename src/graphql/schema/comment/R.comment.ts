@@ -20,7 +20,7 @@ const get_comment = async (
   { id },
   { db },
 ) => {
-  return await db.ds_comment.getComment(id)
+  return await db.ds_comment.getComment.load(id)
 }
 
 const createComment = async (

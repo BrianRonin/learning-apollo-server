@@ -29,7 +29,7 @@
     "compile": "sucrase ./src -d ./outDir --transforms typescript,imports",
     "start": "node ./build/index.js",
     "build": "rimraf ./dist/ && tsc -p .",
-    "mock": "json-server --watch db.json",
+    "mock": "json-server --watch db.json --port 4001",
     "mknex": "knex --knexfile src/db/knexfile.js migrate:make",
     "lknex": "knex --knexfile src/db/knexfile.js migrate:latest",
     "rknex": "knex --knexfile src/db/knexfile.js migrate:rollback",

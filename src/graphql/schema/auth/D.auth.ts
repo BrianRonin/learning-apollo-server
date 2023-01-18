@@ -10,7 +10,7 @@ export class datasource_auth extends MyRestDatasource {
     const user = await this.exist(
       '/users/?email=' + encodeURI(email),
       {
-        errorElseExist: 'email not exists',
+        errorElseExist: 'Email não cadastrado',
       },
     )
     const passwordIsValid = await bcrypt.compare(
@@ -30,7 +30,7 @@ export class datasource_auth extends MyRestDatasource {
       }
     } else {
       throw new GraphQLError(
-        'invalid credentials',
+        'Credenciais inválidas',
       )
     }
   }

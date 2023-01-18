@@ -4,6 +4,7 @@ export const type_comment = `#graphql
     id: ID!
     comment: String!
     user: User!
+    created_at: String!
   }
 
   input CreateComment {

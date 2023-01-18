@@ -8,10 +8,6 @@ const get_comments = async (
   args,
   { db, user },
 ) => {
-  if (!user?.token || !user?.userId)
-    throw new GraphQLError('unauthorized', {
-      extensions: { code: 401 },
-    })
   return await db.ds_comment.getComments()
 }
 
@@ -29,7 +25,7 @@ const createComment = async (
   { db, user },
 ) => {
   if (!user?.token || !user?.userId)
-    throw new GraphQLError('unauthorized', {
+    throw new GraphQLError('Sem autorização', {
       extensions: { code: 401 },
     })
 

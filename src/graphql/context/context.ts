@@ -3,6 +3,7 @@ import { datasource_auth } from '../schema/auth/D.auth'
 import { datasource_comment } from '../schema/comment/D.comment'
 import { datasource_post } from '../schema/post/D.post'
 import { datasource_user } from '../schema/user/D.user'
+import { cookieParser } from '../../utils/cookie-parser'
 
 export interface ApolloContext {
   db: {
@@ -17,7 +18,15 @@ export const context = async ({ req, res }) => {
     req.headers.authorization,
   )
 
+  if (req && req.headers) {
+    // const cookies = cookieParser(
+    // )
+    // console.log(req.headers)
+  }
+
   return {
+    req,
+    res,
     user,
     db: {
       ds_post: new datasource_post(),

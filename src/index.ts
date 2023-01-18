@@ -17,58 +17,57 @@ import { apolloSchema } from './graphql/schema/schema'
 import { ApolloServer } from '@apollo/server'
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer'
 import { wsContext } from './graphql/context/ws-context'
+;(async () => {
+  const app = express()
+  const httpServer = http.createServer(app)
 
-const app = express()
-const httpServer = http.createServer(app)
+  // * Websocket server configuration 🔧
 
-// * Websocket server configuration 🔧
-
-const wss = new WebSocketServer({
-  server: httpServer,
-  path: '/',
-})
-
-// * Apollo configuration 🔧
-
-const webSocketApollo = useServer(
-  {
-    schema: apolloSchema,
-    context: wsContext,
-    onConnect: async (ctx) => {
-      //
-    },
-    onDisconnect(ctx, code, reason) {
-      //
-    },
-  },
-  wss,
-)
-
-const graphQLServer =
-  new ApolloServer<ApolloContext>({
-    schema: apolloSchema,
-    persistedQueries: {
-      ttl: 60,
-    },
-    plugins: [
-      ApolloServerPluginDrainHttpServer({
-        httpServer,
-      }),
-      {
-        async serverWillStart() {
-          return {
-            async drainServer() {
-              await webSocketApollo.dispose()
-            },
-          }
-        },
-      },
-    ],
+  const wss = new WebSocketServer({
+    server: httpServer,
+    path: '/',
   })
 
-// * Start Server 🛸
+  // * Apollo configuration 🔧
 
-const start = async () => {
+  const webSocketApollo = useServer(
+    {
+      schema: apolloSchema,
+      context: wsContext,
+      onConnect: async (ctx) => {
+        //
+      },
+      onDisconnect(ctx, code, reason) {
+        //
+      },
+    },
+    wss,
+  )
+
+  const graphQLServer =
+    new ApolloServer<ApolloContext>({
+      schema: apolloSchema,
+      persistedQueries: {
+        ttl: 60,
+      },
+      plugins: [
+        ApolloServerPluginDrainHttpServer({
+          httpServer,
+        }),
+        {
+          async serverWillStart() {
+            return {
+              async drainServer() {
+                await webSocketApollo.dispose()
+              },
+            }
+          },
+        },
+      ],
+    })
+  graphQLServer
+  // * Start Server 🛸
+
   await graphQLServer.start()
 
   app.use(
@@ -78,7 +77,11 @@ const start = async () => {
         'http://localhost',
         'http://localhost:4000',
         'http://localhost:3000',
+        'http://localhost:3000/login',
+        'https://studio.apollographql.com',
+        'https://learning-apollo-client.vercel.app',
       ],
+      credentials: true,
       optionsSuccessStatus: 200,
     }),
     bodyParser.json(),
@@ -87,11 +90,10 @@ const start = async () => {
     }),
   )
 
-  await new Promise<void>((resolve) =>
+  await new Promise<void>((resolve) => {
     httpServer.listen({ port: 4000 }, resolve),
-  )
-  console.log(
-    `Apollo-server iniciado http://localhost:4000/ 🎇`,
-  )
-}
-start()
+      console.log(
+        `Apollo-server iniciado http://localhost:4000/ 🎇`,
+      )
+  })
+})()

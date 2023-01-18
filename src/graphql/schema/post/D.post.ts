@@ -6,8 +6,8 @@ import { Post } from '../../types'
 export class datasource_post extends MyRestDatasource {
   override baseURL = process.env.URI_LOCAL
 
-  async getPosts(params = {}) {
-    return this.get('/posts/', { params })
+  async getPosts(search: string) {
+    return this.get('/posts/', { params: search })
   }
 
   getPost = this.makeDataLoader(

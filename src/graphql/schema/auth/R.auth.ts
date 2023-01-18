@@ -1,7 +1,9 @@
+import { CookieOptions } from 'express'
+
 const resolver_auth = async (
   parent,
   { email, password },
-  { db },
+  { db, req, res },
 ) => {
   return await db.ds_auth.auth(email, password)
 }

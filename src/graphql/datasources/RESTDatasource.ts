@@ -95,7 +95,7 @@ export class MyRestDatasource extends RESTDataSource {
       throw new GraphQLError(
         error
           ? error
-          : 'password must contain a lowercase, uppercase letter and a number and must be between 6 to 30 characters long',
+          : 'A senha deve conter letras maiúsculas e minúsculas e um número e deve ter pelo menos 6 caracteres',
       )
     }
   }
@@ -123,7 +123,7 @@ export class MyRestDatasource extends RESTDataSource {
       return true
     } else {
       throw new GraphQLError(
-        'invalid credentials',
+        'Credenciais inválidas',
       )
     }
   }

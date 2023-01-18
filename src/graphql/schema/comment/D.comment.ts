@@ -3,11 +3,10 @@ import { Comment } from '../../types'
 
 export class datasource_comment extends MySQLDatasource {
   async getComments(params = {}) {
-    const comment: Comment = await this.db(
+    const comments: Comment[] = await this.db(
       'comments',
     )
-
-    return comment
+    return comments
   }
 
   getComment = this.makeDataLoader(
@@ -25,7 +24,6 @@ export class datasource_comment extends MySQLDatasource {
                 String(post_id),
             )
             .map((comment) => {
-              console.log('comment: ', comment)
               return {
                 ...comment,
                 comment: comment.comment,
@@ -63,6 +61,7 @@ export class datasource_comment extends MySQLDatasource {
     const newComment = {
       id: created[0],
       comment: partialComment.comment,
+      createdAt: new Date(),
     }
 
     return newComment

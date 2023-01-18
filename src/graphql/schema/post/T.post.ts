@@ -39,7 +39,7 @@ export const type_post = `#graphql
   union PostResult = PostNotFoundError | PostTimeoutError | Post
 
   extend type Query {
-    posts(filter: FilterInput): [PostResult]!
+    posts(filter: FilterInput, userId: ID): [PostResult]!
     post(id: ID!): PostResult!
   }
 

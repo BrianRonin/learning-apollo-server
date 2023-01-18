@@ -1,11 +1,13 @@
 import { GraphQLError } from 'graphql'
 
 const resolver_posts = (parent, args, { db }) => {
-  if (args.filter) {
+  if (args.filter || args.userId) {
     const search = new URLSearchParams(
       args.filter,
     ).toString()
-    return db.ds_post.getPosts(search)
+    return db.ds_post.getPosts(
+      args.userId ? args.userId : search,
+    )
   }
   return db.ds_post.getPosts()
 }

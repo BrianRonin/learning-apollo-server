@@ -1,8 +1,6 @@
 export const type_user = `#graphql
  type User {
     id: ID!
-    firstName: String!
-    lastName: String!
     userName: String!
     password: String
     email: String
@@ -12,16 +10,12 @@ export const type_user = `#graphql
   }
 
   input CreateUser {
-    firstName: String!
-    lastName: String!
     userName: String!
     password: String!
     email: String!
   }
 
   input UpdateUser {
-    firstName: String
-    lastName: String
     userName: String
     password: String
     email: String

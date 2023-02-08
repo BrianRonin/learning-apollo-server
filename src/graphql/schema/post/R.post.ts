@@ -6,7 +6,11 @@ const resolver_posts = (parent, args, { db }) => {
       args.filter,
     ).toString()
     return db.ds_post.getPosts(
-      args.userId ? args.userId : search,
+      args.userId
+        ? `?userId=${encodeURIComponent(
+            args.userId,
+          )}`
+        : search,
     )
   }
   return db.ds_post.getPosts()

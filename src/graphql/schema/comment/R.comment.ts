@@ -82,6 +82,7 @@ export const comment_resolvers = {
   General: {
     Comment: {
       user: async (parent, _, { db }) => {
+        console.log('db: ', db)
         if (parent?.user_id) {
           return await db.ds_user.getUser.load(
             parent.user_id,
